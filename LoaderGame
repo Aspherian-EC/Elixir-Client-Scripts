@@ -1,4 +1,4 @@
--- Função para exibir notificações
+--// Função para exibir notificações
 local function showNotification(message)
     local notification = loadstring(game:HttpGet('https://raw.githubusercontent.com/9menta/tests/refs/heads/main/notification.lua'))()
     notification({
@@ -9,23 +9,57 @@ local function showNotification(message)
     })
 end
 
--- Mapeamento de jogos e URLs
-local gameScripts = {
-    [1345139196] = "https://raw.githubusercontent.com/Aspherian-EC/Elixir-Client-Scripts/refs/heads/main/EXC.TreasureHuntSimulator", -- Treasure Hunt Simulator
-    [189707] = "https://raw.githubusercontent.com/Aspherian-EC/Elixir-Client-Scripts/refs/heads/main/ElixirClient-NaturalDisaster.txt", -- Natural Disaster Survival
-    [142823291] = "https://raw.githubusercontent.com/Aspherian-EC/Elixir-Client-Scripts/refs/heads/main/MM2-Elixir.Client", -- MM2
-    [3623096087] = "https://raw.githubusercontent.com/Aspherian-EC/Elixir-Client-Scripts/refs/heads/main/MuscleLegends-EC", -- Muscle Legends
-    [2474168535] = "https://raw.githubusercontent.com/Aspherian-EC/Elixir-Client-Scripts/refs/heads/main/WsTidbnSoa", -- Westbound
-    [3101667897] = "https://raw.githubusercontent.com/Aspherian-EC/Elixir-Client-Scripts/refs/heads/main/LegendsOfSpeed", --legends of speed
+--// Lista organizada de scripts e seus placeIds
+local scriptEntries = {
+    {
+        url = "https://raw.githubusercontent.com/Aspherian-EC/Elixir-Client-Scripts/refs/heads/main/EXC.TreasureHuntSimulator",
+        places = {1345139196}, -- Treasure Hunt Simulator
+    },
+    {
+        url = "https://raw.githubusercontent.com/Aspherian-EC/Elixir-Client-Scripts/refs/heads/main/ElixirClient-NaturalDisaster.txt",
+        places = {189707}, -- Natural Disaster Survival
+    },
+    {
+        url = "https://raw.githubusercontent.com/Aspherian-EC/Elixir-Client-Scripts/refs/heads/main/MM2-Elixir.Client",
+        places = {142823291}, -- Murder Mystery 2
+    },
+    {
+        url = "https://raw.githubusercontent.com/Aspherian-EC/Elixir-Client-Scripts/refs/heads/main/MuscleLegends-EC",
+        places = {3623096087}, -- Muscle Legends
+    },
+    {
+        url = "https://raw.githubusercontent.com/Aspherian-EC/Elixir-Client-Scripts/refs/heads/main/WsTidbnSoa",
+        places = {2474168535}, -- Westbound
+    },
+    {
+        url = "https://raw.githubusercontent.com/Aspherian-EC/Elixir-Client-Scripts/refs/heads/main/LegendsOfSpeed",
+        places = {3101667897}, -- Legends of Speed
+    },
+    {
+        url = "https://raw.githubusercontent.com/Aspherian-EC/Elixir-Client-Scripts/refs/heads/main/ElixirClient%20SaberSimulator",
+        places = {
+            3823781113, -- Saber Simulator principal
+            71460947057345, -- Outro placeId do Saber Simulator
+        },
+    },
 }
 
--- Verifica o jogo atual
-local currentPlaceId = game.PlaceId
-local scriptURL = gameScripts[currentPlaceId]
+--// Cria o mapa invertido placeId -> URL
+local placeToUrl = {}
+for _, entry in ipairs(scriptEntries) do
+    for _, pid in ipairs(entry.places) do
+        placeToUrl[tostring(pid)] = entry.url
+    end
+end
 
-if scriptURL then
-    showNotification("Correct Game! Loading Script...")
-    loadstring(game:HttpGet(scriptURL))()
+--// Detecta o place atual
+local currentPlaceId = tostring(game.PlaceId)
+local selectedUrl = placeToUrl[currentPlaceId]
+
+--// Carrega o script correspondente
+if selectedUrl then
+    showNotification("✅ Correct Game! Loading Script...")
+    loadstring(game:HttpGet(selectedUrl))()
 else
-    showNotification("Incorrect Game! Script not loaded.")
+    showNotification("❌ Incorrect Game! Script not loaded.")
 end
